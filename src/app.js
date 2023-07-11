@@ -4,10 +4,16 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 
-/* The code `const express = require('express');` is importing the Express.js module, which is a web
+/* The code is importing the Express.js module, which is a web
 application framework for Node.js. */
 const express = require('express');
 const app = express();
+
+// mongoose module import
+const mongoose = require('mongoose');
+// user route import
+const userRoutes = require('./routes/userRoute')
+
 
 /* The code `const HOST = process.env.HOST || 'localhost';` is assigning the value of the environment
 variable `HOST` to the constant `HOST`. If the `HOST` environment variable is not defined, it will
@@ -23,7 +29,7 @@ app.use(helmet.permittedCrossDomainPolicies());
 app.use(helmet.referrerPolicy());
 app.use(helmet.contentSecurityPolicy({
     directives:{
-        defaultSrc:["'self'"]
+        defaultSrc:['self']
     }
 }));
 
@@ -48,6 +54,8 @@ a JavaScript object when the data is sent in the URL-encoded format. The `extend
 allows for parsing of nested objects in the URL-encoded data. */
 app.use(express.urlencoded({extended: true}));
 
+// register user routes
+app.use('/api/user', userRoutes)
 
 /* The code is defining a route handler for the GET request to the root path ("/") of the Express.js
 application. */
