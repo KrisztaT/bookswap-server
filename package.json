@@ -6,8 +6,8 @@
   "scripts": {
     "test": "jest --detectOpenHandles",
     "test-cc": "jest --coverage --detectOpenHandles",
-    "start": "node src/index.js",
-	  "dev":"nodemon src/index.js"
+    "start": "NODE_ENV=production node src/server.js",
+	  "dev":"NODE_ENV=development nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
