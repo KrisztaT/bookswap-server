@@ -34,9 +34,13 @@ const userSchema = new Schema({
 //static join method
 userSchema.statics.join = async function(username, first_name, email, password){
 
-     // checking if there is already a user in the database with the same username 
+    // check if all fields are filled
+    if (!username || !first_name || !email || !password ){
+        throw Error("All fields must be filled")
+    }
+    // checking if there is already a user in the database with the same username 
      const usernameExists = await this.findOne({username})
-   // checking if there is already a user in the database with the same email address 
+    // checking if there is already a user in the database with the same email address 
     const emailExists = await this.findOne({email})
    
     // throw error if username already exists in the database
@@ -56,6 +60,33 @@ userSchema.statics.join = async function(username, first_name, email, password){
     // Creating a new user object in the database using the Mongoose `create` method.
     const user = await this.create({username, first_name, email, password: hash})
 
+    return user
+}
+
+// create login static function
+userSchema.statics.login = async function (username, password){
+
+    // check if username and password were provided
+    if (!username || !password){
+        throw Error("All fields must be filled")
+    }
+
+    // find user in the database based on username
+    const user = await this.findOne({username})
+
+    // if username is not in the database throw error
+    if(!user){
+        throw Error("Incorrect username")
+    }
+
+    // compare provided password with the hashed password
+    const match = await bcrypt.compare(password, user.password)
+
+    // if passwords not match throw error
+    if(!match){
+        throw Error("Incorrect password")
+    }
+    
     return user
 }
 

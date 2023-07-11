@@ -10,7 +10,21 @@ const createToken = (_id) => {
 
 // login user
 const loginUser = async (request, response) => {
-  response.json({ message: "Login successful" });
+    const {username, password} = request.body;
+
+    try {
+        // invoke login static method from user model to give back user
+        const user = await User.login(username, password);
+    
+        //create token
+        const token = createToken(user._id)
+    
+        // if there is no error status will be 200 and add back json object with token
+        response.status(200).json({ username, token });
+      } catch (error) {
+        // if error happened status will be 400 and give back the error message
+        response.status(400).json({ error: error.message });
+      }
 };
 
 // join user controller
@@ -26,7 +40,7 @@ const joinUser = async (request, response) => {
     //create token
     const token = createToken(user._id)
 
-    // if there is no error status will be 200 and add back json object
+    // if there is no error status will be 200 and add back json object with token
     response.status(200).json({ email, token });
   } catch (error) {
     // if error happened status will be 400 and give back the error message
