@@ -4,10 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
-    "test-cc": "jest --coverage --detectOpenHandles",
+    "test": " WATCHPACK_POLLING=true NODE_ENV=development jest --detectOpenHandles",
+    "test-cc": "WATCHPACK_POLLING=true NODE_ENV=development jest --coverage --detectOpenHandles",
     "start": "NODE_ENV=production node src/server.js",
-	  "dev":"NODE_ENV=development nodemon src/server.js"
+	  "dev":"WATCHPACK_POLLING=true NODE_ENV=development nodemon src/server.js"
   },
   "keywords": [],
   "author": "",

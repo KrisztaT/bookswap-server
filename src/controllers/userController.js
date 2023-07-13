@@ -41,7 +41,7 @@ const joinUser = async (request, response) => {
     const token = createToken(user._id)
 
     // if there is no error status will be 200 and add back json object with token
-    response.status(200).json({ email, token });
+    response.status(200).json({ username, token });
   } catch (error) {
     // if error happened status will be 400 and give back the error message
     response.status(400).json({ error: error.message });
