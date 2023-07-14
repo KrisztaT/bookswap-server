@@ -1,7 +1,7 @@
 // Import the configured items from the server file:
-var {app, PORT, HOST} = require('./app');
+var {app, PORT} = require('./app');
 
 // Run the server
-app.listen(PORT, HOST, () => {
+app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
 });
