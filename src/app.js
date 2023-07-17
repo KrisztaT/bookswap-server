@@ -17,7 +17,7 @@ const userRoutes = require("./routes/userRoute");
 variable `HOST` to the constant `HOST`. If the `HOST` environment variable is not defined, it will
 default to `'localhost'`. Same with the PORT */
 const HOST = process.env.HOST || "localhost";
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 /* The code is using the `helmet` package to enhance the security of the Express.js application. */
 const helmet = require("helmet");
@@ -37,7 +37,7 @@ Express.js application. CORS is a mechanism that allows resources (e.g., APIs) o
 requested from another domain outside the domain from which the resource originated. */
 const cors = require("cors");
 var corsOptions = {
-  origin: ["http://localhost:5000"],
+  origin: ["http://localhost:3000", "https://bookswap-client.netlify.app"],
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
