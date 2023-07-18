@@ -41,7 +41,22 @@ const search = async (req, res) => {
   }
 };
 
+const addBook = async (req, res) => {
+    const {imgUrl, title, author, page, releaseYear, userId } = req.body
+
+    // !!! handle adding the id to it later when auth verification is available
+
+    // add to the database
+    try {
+        const book = await Book.create({ imgUrl, title, author, page, releaseYear, userId })
+        res.status(200).json(book)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+}
+
 module.exports = {
   getBook,
-  search
+  search,
+  addBook
 };

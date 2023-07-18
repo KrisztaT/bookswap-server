@@ -1,7 +1,7 @@
 const express = require('express')
 
 // controller functions
-const { getBook, /* addBook, updateBook,*/ search } = require('../controllers/bookController');
+const { getBook, addBook, /* updateBook,*/ search } = require('../controllers/bookController');
 
 const router = express.Router()
 
@@ -11,10 +11,8 @@ router.get('/search', search )
 // get book details
 router.get('/:bookId', getBook )
 
-
-
 // add book to database
-/* router.post('/', addBook ) */
+router.post('/', addBook )
 
 // update book details
 /* router.patch('/', updateBook ) */
