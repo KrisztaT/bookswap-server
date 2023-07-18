@@ -1,15 +1,17 @@
 const express = require('express')
 
 // controller functions
-const { getBook, /* addBook, updateBook, checkBookExists */ } = require('../controllers/bookController');
+const { getBook, /* addBook, updateBook,*/ search } = require('../controllers/bookController');
 
 const router = express.Router()
+
+// search for book in the database
+router.get('/search', search )
 
 // get book details
 router.get('/:bookId', getBook )
 
-// check if book exists in the database
-/* router.get('/exists', checkBookExists ) */
+
 
 // add book to database
 /* router.post('/', addBook ) */
