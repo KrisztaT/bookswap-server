@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 // Schema for the "books" collection
 const bookSchema = new mongoose.Schema({
+  imgUrl: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
@@ -10,19 +14,19 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  description: {
+  page: {
     type: String,
     required: true
   },
-  img_url: {
+  releaseYear:{
     type: String,
     required: true
   },
-  listing_id: {
+  listingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Listing',
   },
-  user_id: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true

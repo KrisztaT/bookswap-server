@@ -10,8 +10,11 @@ const app = express();
 
 // mongoose module import
 const mongoose = require("mongoose");
-// user route import
-const userRoutes = require("./routes/userRoute");
+// user routes import
+const userRoute = require("./routes/userRoute");
+
+// book route import
+const bookRoute = require("./routes/bookRoute");
 
 /* The code is assigning the value of the environment
 variable `HOST` to the constant `HOST`. If the `HOST` environment variable is not defined, it will
@@ -86,8 +89,11 @@ a JavaScript object when the data is sent in the URL-encoded format. The `extend
 allows for parsing of nested objects in the URL-encoded data. */
 app.use(express.urlencoded({ extended: true }));
 
-// register user routes
-app.use("/api/user", userRoutes);
+// register user route
+app.use("/api/user", userRoute);
+
+// register book route
+app.use("/api/book", bookRoute);
 
 /* The code is defining a route handler for the GET request to the root path ("/") of the Express.js
 application. */
