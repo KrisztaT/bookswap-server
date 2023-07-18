@@ -42,21 +42,51 @@ const search = async (req, res) => {
 };
 
 const addBook = async (req, res) => {
-    const {imgUrl, title, author, page, releaseYear, userId } = req.body
+  const { imgUrl, title, author, page, releaseYear, userId } = req.body;
 
-    // !!! handle adding the id to it later when auth verification is available
+  // !!! handle adding the id to it later when auth verification is available
 
-    // add to the database
-    try {
-        const book = await Book.create({ imgUrl, title, author, page, releaseYear, userId })
-        res.status(200).json(book)
-    } catch (error) {
-        res.status(400).json({ error: error.message })
-    }
-}
+  // add to the database
+  try {
+    const book = await Book.create({
+      imgUrl,
+      title,
+      author,
+      page,
+      releaseYear,
+      userId,
+    });
+    res.status(200).json(book);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const updateBook = async (req, res) => {
+  const { bookId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(bookId)) {
+    return res.status(400).json({ error: "No such book" });
+  }
+
+  const book = await Book.findOneAndUpdate(
+    { _id: bookId },
+    {
+      ...req.body,
+    },
+    { new: true }
+  );
+
+  if (!book) {
+    return res.status(400).json({ error: "No such book" });
+  }
+
+  res.status(200).json(book);
+};
 
 module.exports = {
   getBook,
   search,
-  addBook
+  addBook,
+  updateBook
 };
