@@ -10,7 +10,7 @@ const getBook = async (req, res) => {
 
   // check if the provided id is a valid MongoDB ObjectId.
   if (!mongoose.Types.ObjectId.isValid(bookId)) {
-    return res.status(404).json({ error: "No such id." });
+    return res.status(404).json({ error: "Book can not be found with this id." });
   }
 
   // query the database to find a book with the specified id.
@@ -18,7 +18,7 @@ const getBook = async (req, res) => {
 
   // book is not found
   if (!book) {
-    return res.status(404).json({ error: "No such book" });
+    return res.status(404).json({ error: "Book can not be found in the database." });
   }
 
   // book retrieved
@@ -41,13 +41,14 @@ const search = async (req, res) => {
   }
 };
 
+// add book to the database
 const addBook = async (req, res) => {
-  const { imgUrl, title, author, page, releaseYear, userId } = req.body;
-
-  // !!! handle adding the id to it later when auth verification is available
-
-  // add to the database
+  const { imgUrl, title, author, page, releaseYear } = req.body;
+  
+  // add book to the database
   try {
+    // user id coming from the jwt token
+    const userId = req.user._id; 
     const book = await Book.create({
       imgUrl,
       title,
@@ -62,25 +63,31 @@ const addBook = async (req, res) => {
   }
 };
 
+// update book details, only creator is authorised to do that
 const updateBook = async (req, res) => {
+  // bookId is coming from the parameters
   const { bookId } = req.params;
+  // user id coming from the jwt token
+  const userId = req.user._id;
 
+  // check if the provided id is a valid MongoDB ObjectId.
   if (!mongoose.Types.ObjectId.isValid(bookId)) {
-    return res.status(400).json({ error: "No such book" });
+    return res.status(400).json({ error: "Book can not be found with this id." });
   }
 
+  // update book details in the database ans pass back the new book details
   const book = await Book.findOneAndUpdate(
-    { _id: bookId },
+    { _id: bookId, userId: userId},
     {
       ...req.body,
     },
     { new: true }
   );
 
+  // if book was not found with bookId and created by user with userId, error is sent.
   if (!book) {
-    return res.status(400).json({ error: "No such book" });
+    return res.status(400).json({ error: "Request is not authorized or Book can not be found in the database." });
   }
-
   res.status(200).json(book);
 };
 
