@@ -16,6 +16,9 @@ const userRoute = require("./routes/userRoute");
 // book route import
 const bookRoute = require("./routes/bookRoute");
 
+// listing route import
+const listingRoute = require("./routes/listingRoute");
+
 /* The code is assigning the value of the environment
 variable `HOST` to the constant `HOST`. If the `HOST` environment variable is not defined, it will
 default to `'localhost'`. Same with the PORT */
@@ -94,6 +97,9 @@ app.use("/api/user", userRoute);
 
 // register book route
 app.use("/api/book", bookRoute);
+
+//register listing route
+app.use("/api/listing", listingRoute);
 
 /* The code is defining a route handler for the GET request to the root path ("/") of the Express.js
 application. */
