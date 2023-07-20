@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const listingSchema = new mongoose.Schema({
-  book_id: {
+  bookId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Book',
     required: true,
   },
-  lender_id: {
+  lenderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -15,6 +15,7 @@ const listingSchema = new mongoose.Schema({
     type: String,
     enum: ['available', 'borrowed'],
     required: true,
+    default: 'available',
   },
  /* These are part of the advanced scope 
   condition: {
