@@ -4,14 +4,34 @@ const Book = require("../models/bookModel");
 
 // get listing details based on the lender id from the token
 const getLenderListing = async (req, res) => {
-  // user id coming from the jwt token
-  const lenderId = req.user._id;
+  try {
+    // user id coming from the jwt token
+    const lenderId = req.user._id;
 
-  // query the database to find th listing with the specified lender id and populate it with book details
-  const lenderListings = await Listing.find({ lenderId }).populate("bookId");
+    // query the database to find the listings with the specified lender id and populate them with book details
+    const lenderListings = await Listing.find({ lenderId }).populate("bookId");
 
-  // listing details retrieved
-  res.status(200).json(lenderListings);
+    // map the listings to the desired response structure
+    const response = lenderListings.map((listing) => ({
+      book: {
+        _id: listing.bookId._id,
+        imgUrl: listing.bookId.imgUrl,
+        title: listing.bookId.title,
+        author: listing.bookId.author,
+        page: listing.bookId.page,
+        releaseYear: listing.bookId.releaseYear,
+      },
+      listing: {
+        _id: listing._id,
+        availability: listing.availability,
+      },
+    }));
+
+    // return the response with the mapped data
+    res.status(200).json(response);
+  } catch (error) {
+    res.json({ error: error.message });
+  }
 };
 
 // add book to the listing (if book does not exist add it to the database)
@@ -69,7 +89,7 @@ const addBookToListing = async (req, res) => {
       res.status(409).json({ error: "This book was already listed." });
     }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 };
 
