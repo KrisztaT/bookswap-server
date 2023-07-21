@@ -18,12 +18,12 @@ const getLenderListing = async (req, res) => {
 const addBookToListing = async (req, res) => {
   const { imgUrl, title, author, page, releaseYear } = req.body;
 
-  // check if the book already exists in the "books" collection
-  let book = await Book.findOne({ title, author });
+  try {
+    // check if the book already exists in the "books" collection
+    let book = await Book.findOne({ title, author });
 
-  // if the book does not exist, add it to the "books" collection
-  if (!book) {
-    try {
+    // if the book does not exist, add it to the "books" collection
+    if (!book) {
       const userId = req.user._id;
       book = await Book.create({
         imgUrl,
@@ -33,20 +33,41 @@ const addBookToListing = async (req, res) => {
         releaseYear,
         userId,
       });
-    } catch (error) {
-      return res.status(400).json({ error: error.message });
     }
-  }
 
-  // add the listing details to the listings collection using the book id
-  try {
     const lenderId = req.user._id;
     const bookId = book._id;
-    const listing = await Listing.create({
-      bookId,
-      lenderId,
-    });
-    res.status(200).json(listing);
+
+    // check if the listing already exists for this lender and book
+    const listing = await Listing.findOne({ lenderId, bookId });
+
+    if (!listing) {
+      // add the listing details to the listings collection using the book id
+      const newListing = await Listing.create({
+        bookId,
+        lenderId,
+      });
+
+      const response = {
+        book: {
+          _id: book._id,
+          imgUrl: book.imgUrl,
+          title: book.title,
+          author: book.author,
+          page: book.page,
+          releaseYear: book.releaseYear,
+        },
+        listing: {
+          _id: newListing._id,
+          availability: newListing.availability,
+        },
+      };
+
+      res.status(200).json(response);
+    } else {
+      // listing already exists for this lender and book
+      res.status(409).json({ error: "This book was already listed." });
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -106,7 +127,9 @@ const searchListings = async (req, res) => {
     );
 
     if (!listings) {
-      return res.status(404).json({ error: "Listing can not be found for the book!" });
+      return res
+        .status(404)
+        .json({ error: "Listing can not be found for the book!" });
     }
 
     // combine book, listing, and lender details and send as the response
@@ -149,7 +172,10 @@ const deleteListing = async (req, res) => {
 
   try {
     // find the listing to be deleted based on listingId and lenderId
-    const listing = await Listing.findOneAndDelete({ _id: listingId, lenderId });
+    const listing = await Listing.findOneAndDelete({
+      _id: listingId,
+      lenderId,
+    });
 
     res.json({ message: "Listing successfully deleted!" });
   } catch (error) {
