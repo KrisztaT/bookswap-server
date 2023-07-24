@@ -20,6 +20,7 @@ const getLenderListing = async (req, res) => {
         author: listing.bookId.author,
         page: listing.bookId.page,
         releaseYear: listing.bookId.releaseYear,
+        isCreated: listing.bookId.creatorId.toString() == lenderId.toString(),
       },
       listing: {
         _id: listing._id,
@@ -44,14 +45,14 @@ const addBookToListing = async (req, res) => {
 
     // if the book does not exist, add it to the "books" collection
     if (!book) {
-      const userId = req.user._id;
+      const creatorId = req.user._id;
       book = await Book.create({
         imgUrl,
         title,
         author,
         page,
         releaseYear,
-        userId,
+        creatorId,
       });
     }
 
@@ -76,6 +77,8 @@ const addBookToListing = async (req, res) => {
           author: book.author,
           page: book.page,
           releaseYear: book.releaseYear,
+          creatorId: book.creatorId,
+          isCreated: true,
         },
         listing: {
           _id: newListing._id,
@@ -160,6 +163,7 @@ const searchListings = async (req, res) => {
         author: book.author,
         page: book.page,
         releaseYear: book.releaseYear,
+        creatorId: book.creatorId,
       },
       listings: listings.map((listing) => ({
         availability: listing.availability,
