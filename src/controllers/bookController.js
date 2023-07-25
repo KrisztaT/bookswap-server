@@ -48,14 +48,14 @@ const addBook = async (req, res) => {
   // add book to the database
   try {
     // user id coming from the jwt token
-    const userId = req.user._id; 
+    const creatorId = req.user._id; 
     const book = await Book.create({
       imgUrl,
       title,
       author,
       page,
       releaseYear,
-      userId,
+      creatorId,
     });
     res.status(200).json(book);
   } catch (error) {
@@ -68,7 +68,7 @@ const updateBook = async (req, res) => {
   // bookId is coming from the parameters
   const { bookId } = req.params;
   // user id coming from the jwt token
-  const userId = req.user._id;
+  const creatorId = req.user._id;
 
   // check if the provided id is a valid MongoDB ObjectId.
   if (!mongoose.Types.ObjectId.isValid(bookId)) {
@@ -77,7 +77,7 @@ const updateBook = async (req, res) => {
 
   // update book details in the database ans pass back the new book details
   const book = await Book.findOneAndUpdate(
-    { _id: bookId, userId: userId},
+    { _id: bookId, creatorId: creatorId},
     {
       ...req.body,
     },

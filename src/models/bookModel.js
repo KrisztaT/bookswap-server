@@ -22,11 +22,7 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  listingId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Listing',
-  },
-  userId: {
+  creatorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
