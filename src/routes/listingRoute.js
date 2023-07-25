@@ -1,7 +1,7 @@
 const express = require('express')
 
 // controller functions import
-const { getLenderListing, searchListings, addBookToListing, updateListing, deleteListing } = require('../controllers/listingController');
+const { getLenderListing, searchListings, addBookToListing,/*  updateListing ,*/ deleteListing, updateBookAndListing } = require('../controllers/listingController');
 
 // check authentication middleware import
 const checkAuth = require('../middlewares/checkAuth')
@@ -21,7 +21,10 @@ router.get("/search", searchListings)
 router.post('/', addBookToListing )
 
 // update listing details
-router.patch('/:listingId', updateListing )
+/* router.patch('/:listingId', updateListing ) */
+
+// update book and listing details
+router.patch('/updateBookAndListing/:bookId/:listingId', updateBookAndListing);
 
 // delete listing
 router.delete('/:listingId', deleteListing )
