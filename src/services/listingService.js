@@ -19,7 +19,7 @@ const updateListing = async (listingId, userId, newData) => {
       { new: true }
     );
   
-    // if listing was not found with listingId and created by user with lenderId, error is sent.
+    // if listing was not found with listingId or created by user with lenderId, error is sent.
     if (!listing) {
         throw new Error("Request is not authorized or Listing can not be found in the database.");
       }

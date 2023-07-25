@@ -2,7 +2,6 @@
 const Book = require("../models/bookModel");
 const mongoose = require("mongoose");
 
-
 // update book details, only creator is authorised to do that
 const updateBook = async (bookId, userId, newData) => {
   
@@ -11,7 +10,7 @@ const updateBook = async (bookId, userId, newData) => {
         throw new Error("Book can not be found with this id." );
     }
   
-    // update book details in the database ans pass back the new book details
+    // update book details in the database and pass back the new book details
     const book = await Book.findOneAndUpdate(
       { _id: bookId, creatorId: userId},
       {
@@ -20,7 +19,7 @@ const updateBook = async (bookId, userId, newData) => {
       { new: true }
     );
   
-    // if book was not found with bookId and created by user with userId, error is sent.
+    // if book was not found with bookId or created by user with userId, error is sent.
     if (!book) {
         throw new Error("Request is not authorized or Book can not be found in the database.");
     }
