@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Listing = require("../models/listingModel");
 const Book = require("../models/bookModel");
-const { updateBook } = require("../services/bookService");
-const { updateListing } = require("../services/listingService");
+const { updateBook } = require('../services/bookService');
+const { updateListing } = require('../services/listingService');
 
 // get listing details based on the lender id from the token
 const getLenderListing = async (req, res) => {
@@ -217,13 +217,13 @@ const updateBookAndListing = async (req, res) => {
     // user id coming from the jwt token
     const userId = req.user._id;
 
-    // find the book to have book information even if the creator is not the same as the user
-    let book = await Book.findById(bookId);
+     // find the book to have book information even if the creator is not the same as the user
+     let book = await Book.findById(bookId);
 
-    // if the creator is not the same as the user, then update the book details and give back the new book information
-    if (book.creatorId.toString() === userId.toString()) {
-      book = await updateBook(bookId, userId, req.body.book);
-    }
+     // if the creator is not the same as the user, then update the book details and give back the new book information
+     if (book.creatorId.toString() === userId.toString()) {
+      book = await updateBook(bookId, userId, req.body);
+     }
 
     // modify the listing information of the book
     const listing = await updateListing(listingId, userId, req.body);

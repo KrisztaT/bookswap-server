@@ -22,7 +22,7 @@ const updateBook = async (bookId, userId, newData) => {
     // if book was not found with bookId or created by user with userId, error is sent.
     if (!book) {
         throw new Error("Request is not authorized or Book can not be found in the database.");
-    }
+    } 
     return book;
   };
 
