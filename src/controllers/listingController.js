@@ -39,7 +39,7 @@ const getLenderListing = async (req, res) => {
 
 // add book to the listing (if book does not exist add it to the database)
 const addBookToListing = async (req, res) => {
-  const { imgUrl, title, author, page, releaseYear } = req.body;
+  const { imgUrl, title, author, page, releaseYear, condition, location } = req.body;
 
   try {
     // check if the book already exists in the "books" collection
@@ -69,6 +69,8 @@ const addBookToListing = async (req, res) => {
       const newListing = await Listing.create({
         bookId,
         lenderId,
+        condition,
+        location
       });
 
       const response = {
@@ -85,6 +87,8 @@ const addBookToListing = async (req, res) => {
         listing: {
           _id: newListing._id,
           availability: newListing.availability,
+          condition: newListing.condition,
+          location: newListing.location
         },
       };
 
