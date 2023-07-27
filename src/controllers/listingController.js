@@ -85,7 +85,7 @@ const addBookToListing = async (req, res) => {
           page: book.page,
           releaseYear: book.releaseYear,
           creatorId: book.creatorId,
-          isCreated: true,
+          isCreated: listing.bookId.creatorId.toString() == lenderId.toString(),
         },
         listing: {
           _id: newListing._id,
@@ -101,7 +101,7 @@ const addBookToListing = async (req, res) => {
       res.status(409).json({ error: "This book was already listed." });
     }
   } catch (error) {
-    res.json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -145,11 +145,11 @@ const searchListings = async (req, res) => {
     // deconstruct query string
     const { title, author, location, condition } = req.query;
 
-    // create a base query object with the mandatory "title" field
-    const query = { title };
+    // create a base query object with the mandatory "title" field to be case insensitive for search
+    const query = {title: { $regex: `^${title}`, $options: 'i' }};
 
-    // add optional fields to the query if they are provided in the request
-    if (author) query.author = author;
+    // add optional fields to the query if they are provided in the request and make it to be case insensitive for search
+    if (author) query.author = { $regex: `^${author}`, $options: 'i' };
 
     // find the book based on the provided title
     const book = await Book.findOne(query);
@@ -162,8 +162,9 @@ const searchListings = async (req, res) => {
     // create an additional query object for listing search
     const listingQuery = { bookId: book._id };
 
-    // add optional fields to the listing query if they are provided in the request
-    if (location) listingQuery.location = location;
+    // add optional fields to the listing query if they are provided in the request and make it to be case insensitive for search
+    if (location) listingQuery.location = { $regex: `^${location}`, $options: 'i' };
+    // condition can be chosen from a list
     if (condition) listingQuery.condition = condition;
 
     // find the associated listings for the book
