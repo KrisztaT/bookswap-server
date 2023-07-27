@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Listing = require("../models/listingModel");
 const Book = require("../models/bookModel");
-const { updateBook } = require('../services/bookService');
-const { updateListing } = require('../services/listingService');
+const { updateBook } = require("../services/bookService");
+const { updateListing } = require("../services/listingService");
 
 // get listing details based on the lender id from the token
 const getLenderListing = async (req, res) => {
@@ -27,6 +27,8 @@ const getLenderListing = async (req, res) => {
       listing: {
         _id: listing._id,
         availability: listing.availability,
+        location: listing.location,
+        condition: listing.condition,
       },
     }));
 
@@ -39,7 +41,8 @@ const getLenderListing = async (req, res) => {
 
 // add book to the listing (if book does not exist add it to the database)
 const addBookToListing = async (req, res) => {
-  const { imgUrl, title, author, page, releaseYear } = req.body;
+  const { imgUrl, title, author, page, releaseYear, condition, location } =
+    req.body;
 
   try {
     // check if the book already exists in the "books" collection
@@ -69,6 +72,8 @@ const addBookToListing = async (req, res) => {
       const newListing = await Listing.create({
         bookId,
         lenderId,
+        condition,
+        location,
       });
 
       const response = {
@@ -80,11 +85,13 @@ const addBookToListing = async (req, res) => {
           page: book.page,
           releaseYear: book.releaseYear,
           creatorId: book.creatorId,
-          isCreated: true,
+          isCreated: listing.bookId.creatorId.toString() == lenderId.toString(),
         },
         listing: {
           _id: newListing._id,
           availability: newListing.availability,
+          condition: newListing.condition,
+          location: newListing.location,
         },
       };
 
@@ -94,7 +101,7 @@ const addBookToListing = async (req, res) => {
       res.status(409).json({ error: "This book was already listed." });
     }
   } catch (error) {
-    res.json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -135,23 +142,37 @@ const updateListing = async (req, res) => {
 // search listing based on title
 const searchListings = async (req, res) => {
   try {
-    const { title } = req.query;
+    // deconstruct query string
+    const { title, author, location, condition } = req.query;
+
+    // create a base query object with the mandatory "title" field to be case insensitive for search
+    const query = {title: { $regex: `^${title}`, $options: 'i' }};
+
+    // add optional fields to the query if they are provided in the request and make it to be case insensitive for search
+    if (author) query.author = { $regex: `^${author}`, $options: 'i' };
 
     // find the book based on the provided title
-    const book = await Book.findOne({ title });
+    const book = await Book.findOne(query);
 
     // if book is not found
     if (!book) {
       return res.status(404).json({ error: "Book can not be found!" });
     }
 
-    // find the associated listings for the book
-    //populate lender details (only include first_name and email)
-    const listings = await Listing.find({ bookId: book._id }).populate(
-      "lenderId"
-    );
+    // create an additional query object for listing search
+    const listingQuery = { bookId: book._id };
 
-    if (!listings) {
+    // add optional fields to the listing query if they are provided in the request and make it to be case insensitive for search
+    if (location) listingQuery.location = { $regex: `^${location}`, $options: 'i' };
+    // condition can be chosen from a list
+    if (condition) listingQuery.condition = condition;
+
+    // find the associated listings for the book
+    // populate lender details (only include first_name and email)
+    const listings = await Listing.find(listingQuery).populate("lenderId");
+
+    // check if listings array is empty
+    if (!listings || listings.length === 0) {
       return res
         .status(404)
         .json({ error: "Listing can not be found for the book!" });
@@ -169,6 +190,8 @@ const searchListings = async (req, res) => {
       },
       listings: listings.map((listing) => ({
         availability: listing.availability,
+        location: listing.location,
+        condition: listing.condition,
         lender: {
           first_name: listing.lenderId.first_name,
           email: listing.lenderId.email,
@@ -217,13 +240,13 @@ const updateBookAndListing = async (req, res) => {
     // user id coming from the jwt token
     const userId = req.user._id;
 
-     // find the book to have book information even if the creator is not the same as the user
-     let book = await Book.findById(bookId);
+    // find the book to have book information even if the creator is not the same as the user
+    let book = await Book.findById(bookId);
 
-     // if the creator is not the same as the user, then update the book details and give back the new book information
-     if (book.creatorId.toString() === userId.toString()) {
+    // if the creator is not the same as the user, then update the book details and give back the new book information
+    if (book.creatorId.toString() === userId.toString()) {
       book = await updateBook(bookId, userId, req.body);
-     }
+    }
 
     // modify the listing information of the book
     const listing = await updateListing(listingId, userId, req.body);
@@ -243,6 +266,8 @@ const updateBookAndListing = async (req, res) => {
       listing: {
         _id: listing._id,
         availability: listing.availability,
+        location: listing.location,
+        condition: listing.condition
       },
     };
 

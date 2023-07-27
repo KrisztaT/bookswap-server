@@ -17,15 +17,16 @@ const listingSchema = new mongoose.Schema({
     required: true,
     default: 'available',
   },
- /* These are part of the advanced scope 
   condition: {
     type: String,
+    enum: ['new', 'good', 'acceptable', 'used'],
     required: true,
   },
   location: {
     type: String,
     required: true,
   },
+   /* These are part of the advanced scope 
   borrower_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
