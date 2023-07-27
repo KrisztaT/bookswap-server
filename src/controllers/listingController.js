@@ -85,7 +85,7 @@ const addBookToListing = async (req, res) => {
           page: book.page,
           releaseYear: book.releaseYear,
           creatorId: book.creatorId,
-          isCreated: listing.bookId.creatorId.toString() == lenderId.toString(),
+          isCreated: book.creatorId.toString() == lenderId.toString(),
         },
         listing: {
           _id: newListing._id,
