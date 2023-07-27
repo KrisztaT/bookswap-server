@@ -27,6 +27,8 @@ const getLenderListing = async (req, res) => {
       listing: {
         _id: listing._id,
         availability: listing.availability,
+        location: listing.location,
+        condition: listing.condition
       },
     }));
 
