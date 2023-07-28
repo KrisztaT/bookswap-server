@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 
 //create token function is used at both login and join
 const createToken = (_id) => {
-  return jwt.sign({_id},process.env.JWT_SECRET, {expiresIn: '8h'} )
+  return jwt.sign({_id},process.env.JWT_SECRET, {expiresIn: '24h'} )
 }
 
 // login user
