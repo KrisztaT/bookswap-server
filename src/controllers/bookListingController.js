@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Listing = require("../models/listingModel");
 const Book = require("../models/bookModel");
-const { updateBook } = require("../services/bookService");
-const { updateListing } = require("../services/listingService");
+const { updateBook, createBook } = require("../services/bookService");
+const { updateListing, createListing } = require("../services/listingService");
 
 // get listing details based on the lender id from the token
 const getLenderListings = async (req, res) => {
@@ -51,14 +51,7 @@ const addBookToListing = async (req, res) => {
     // if the book does not exist, add it to the "books" collection
     if (!book) {
       const creatorId = req.user._id;
-      book = await Book.create({
-        imgUrl,
-        title,
-        author,
-        page,
-        releaseYear,
-        creatorId,
-      });
+      book = await createBook({ imgUrl, title, author, page, releaseYear, creatorId });
     }
 
     const lenderId = req.user._id;
@@ -69,12 +62,7 @@ const addBookToListing = async (req, res) => {
 
     if (!listing) {
       // add the listing details to the listings collection using the book id
-      const newListing = await Listing.create({
-        bookId,
-        lenderId,
-        condition,
-        location,
-      });
+      const newListing = await createListing(bookId, lenderId, condition, location);
 
       const response = {
         book: {

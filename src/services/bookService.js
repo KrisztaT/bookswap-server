@@ -5,11 +5,6 @@ const mongoose = require("mongoose");
 // update book details, only creator is authorised to do that
 const updateBook = async (bookId, userId, newData) => {
   
-    // check if the provided id is a valid MongoDB ObjectId.
-    if (!mongoose.Types.ObjectId.isValid(bookId)) {
-        throw new Error("Book can not be found with this id." );
-    }
-  
     // update book details in the database and pass back the new book details
     const book = await Book.findOneAndUpdate(
       { _id: bookId, creatorId: userId},
@@ -26,6 +21,25 @@ const updateBook = async (bookId, userId, newData) => {
     return book;
   };
 
-  module.exports = {
-    updateBook
+ 
+  // create book
+  const createBook = async ({ imgUrl, title, author, page, releaseYear, creatorId }) => {
+    try {
+      return await Book.create({
+        imgUrl,
+        title,
+        author,
+        page,
+        releaseYear,
+        creatorId,
+      });
+    } catch (error) {
+      // handle the error, log it, or rethrow it with more context
+      throw new Error(`Error creating book: ${error.message}`);
+    }
   };
+  
+module.exports = {
+  updateBook,
+  createBook
+};

@@ -26,7 +26,22 @@ const updateListing = async (listingId, userId, newData) => {
     return listing;
   };
 
+  const createListing = async (bookId, lenderId, condition, location) => {
+    try {
+      return await Listing.create({
+        bookId,
+        lenderId,
+        condition,
+        location,
+      });
+    } catch (error) {
+      // handle the error, log it, or rethrow it with more context
+      throw new Error(`Error creating listing: ${error.message}`);
+    }
+  };
+
   module.exports = {
     updateListing,
+    createListing
   };
   
