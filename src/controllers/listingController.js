@@ -105,39 +105,6 @@ const addBookToListing = async (req, res) => {
   }
 };
 
-/* // update listing details, only lender is authorised to do that
-// in MVP this is the availability status change
-const updateListing = async (req, res) => {
-  // listingId is coming from the parameters
-  const { listingId } = req.params;
-  // lender id coming from the jwt token
-  const lenderId = req.user._id;
-
-  // check if the provided id is a valid MongoDB ObjectId.
-  if (!mongoose.Types.ObjectId.isValid(listingId)) {
-    return res
-      .status(400)
-      .json({ error: "Listing can not be found with this id." });
-  }
-
-  // update listing details in the database and pass back the new listing details
-  const listing = await Listing.findOneAndUpdate(
-    { _id: listingId, lenderId: lenderId },
-    {
-      ...req.body,
-    },
-    { new: true }
-  );
-
-  // if listing was not found with listingId and created by user with lenderId, error is sent.
-  if (!listing) {
-    return res.status(400).json({
-      error:
-        "Request is not authorized or Listing can not be found in the database.",
-    });
-  }
-  res.status(200).json(listing);
-}; */
 
 // search listing based on title
 const searchListings = async (req, res) => {
@@ -283,7 +250,6 @@ module.exports = {
   getLenderListing,
   searchListings,
   addBookToListing,
-  /*   updateListing, */
   deleteListing,
   updateBookAndListing,
 };
