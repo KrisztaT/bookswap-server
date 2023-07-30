@@ -95,6 +95,14 @@ app.use("/api/user", userRoute);
 //register listing route
 app.use("/api/listing", listingRoute);
 
+// error handling middleware function is defined to catch all errors and handle them
+app.use((error, request, response, next) => {
+  const statusCode = error.statusCode || 500;
+  response.status(statusCode).json({
+    error: error.message
+  });
+});
+
 /* The code is defining a route handler for the GET request to the root path ("/") of the Express.js
 application. */
 app.get("/", (request, response) => {
