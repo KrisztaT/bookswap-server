@@ -7,7 +7,7 @@ const { getLenderListings, searchListings, addBookToListing,deleteListing, updat
 const checkAuth = require('../middlewares/checkAuth')
 
 //validate middleware import
-const { validateIdsMiddleware, validateAndSanitiseAddBookAndListing } = require('../middlewares/validate')
+const { validateIds, validateAndSanitiseAddBookAndListing } = require('../middlewares/validate')
 
 const router = express.Router()
 
@@ -24,9 +24,9 @@ router.get("/search", searchListings)
 router.post('/', validateAndSanitiseAddBookAndListing, addBookToListing )
 
 // update book and listing details
-router.patch('/:bookId/:listingId', validateIdsMiddleware, updateBookAndListing);
+router.patch('/:bookId/:listingId', validateIds, updateBookAndListing);
 
 // delete listing
-router.delete('/:listingId', validateIdsMiddleware, deleteListing )
+router.delete('/:listingId', validateIds, deleteListing )
 
 module.exports = router

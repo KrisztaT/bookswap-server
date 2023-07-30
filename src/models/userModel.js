@@ -9,7 +9,6 @@ const userSchema = new Schema({
 		type: String,
 		unique: true,
 		required: true,
-        minLength: 5
 	},
     first_name: {
         type: String,
@@ -35,7 +34,7 @@ userSchema.statics.join = async function(username, first_name, email, password){
 
     // check if all fields are filled
     if (!username || !first_name || !email || !password ){
-        throw Error("All fields must be filled")
+        throw Error("All fields must be filled!")
     }
     // checking if there is already a user in the database with the same username 
      const usernameExists = await this.findOne({username})

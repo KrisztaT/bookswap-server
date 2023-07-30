@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 
-const validateIdsMiddleware = (req, res, next) => {
+const validateIds = (req, res, next) => {
   const { bookId, listingId } = req.params;
 
   // check if listingId is a valid ObjectId
@@ -79,11 +79,74 @@ const validateAndSanitiseAddBookAndListing = [
     .customSanitizer(capitalise)
     .withMessage("Location is required! "),
 
-  // process the validation and sanitization results
+  // process the validation and sanitisation results
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-     // error array is mapped and only the error messages are returned for meaningful error display on the frontend
+      // error array is mapped and only the error messages are returned for meaningful error display on the frontend
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res.status(422).json({ error: errorMessages });
+    }
+    // if validation is successful, continue to the next middleware/controller
+    next();
+  },
+];
+
+// validation rules for user registration.
+const validateJoinData = [
+  // username must be defined and not be empty, additional rules can be found in the user model
+  body("username")
+    .notEmpty()
+    .trim()
+    .escape()
+    .isLength({ min: 5 })
+    .withMessage("Username must be at least 5 characters long. "),
+
+  // first_name must be defined and not be empty
+  body("first_name")
+    .notEmpty()
+    .trim()
+    .escape()
+    .isLength({ min: 3 })
+    .withMessage("First name must be at least 3 characters long. "),
+
+  // email must be defined and not be empty additional rules can be found in the user model
+  body("email")
+    .notEmpty()
+    .isEmail()
+    .normalizeEmail()
+    .withMessage("Invalid email address. "),
+
+  body("password")
+    .notEmpty()
+    .trim()
+    .escape()
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long. "),
+
+  // process the validation results
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // error array is mapped and only the error messages are returned for meaningful error display on the frontend
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res.status(422).json({ error: errorMessages });
+    }
+    // if validation is successful, continue to the next middleware/controller
+    next();
+  },
+];
+
+// validation rules for login
+const validateLoginData = [
+  body("username").notEmpty().withMessage("Username is required. "),
+  body("password").notEmpty().withMessage("Password is required. "),
+
+  // process the validation results
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // error array is mapped and only the error messages are returned for meaningful error display on the frontend
       const errorMessages = errors.array().map((error) => error.msg);
       return res.status(422).json({ error: errorMessages });
     }
@@ -93,6 +156,8 @@ const validateAndSanitiseAddBookAndListing = [
 ];
 
 module.exports = {
-  validateIdsMiddleware,
+  validateIds,
   validateAndSanitiseAddBookAndListing,
+  validateLoginData,
+  validateJoinData,
 };
