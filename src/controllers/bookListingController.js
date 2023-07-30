@@ -5,7 +5,7 @@ const { updateBook } = require("../services/bookService");
 const { updateListing } = require("../services/listingService");
 
 // get listing details based on the lender id from the token
-const getLenderListing = async (req, res) => {
+const getLenderListings = async (req, res) => {
   try {
     // user id coming from the jwt token
     const lenderId = req.user._id;
@@ -247,7 +247,7 @@ const updateBookAndListing = async (req, res) => {
 };
 
 module.exports = {
-  getLenderListing,
+  getLenderListings,
   searchListings,
   addBookToListing,
   deleteListing,

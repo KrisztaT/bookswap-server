@@ -14,7 +14,7 @@ const mongoose = require("mongoose");
 const userRoute = require("./routes/userRoute");
 
 // listing route import
-const listingRoute = require("./routes/listingRoute");
+const listingRoute = require("./routes/bookListingRoute");
 
 /* The code is assigning the value of the environment
 variable `HOST` to the constant `HOST`. If the `HOST` environment variable is not defined, it will
