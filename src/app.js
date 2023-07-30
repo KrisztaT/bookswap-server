@@ -13,9 +13,6 @@ const mongoose = require("mongoose");
 // user routes import
 const userRoute = require("./routes/userRoute");
 
-// book route import
-const bookRoute = require("./routes/bookRoute");
-
 // listing route import
 const listingRoute = require("./routes/listingRoute");
 
@@ -94,9 +91,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // register user route
 app.use("/api/user", userRoute);
-
-// register book route
-app.use("/api/book", bookRoute);
 
 //register listing route
 app.use("/api/listing", listingRoute);
