@@ -6,6 +6,9 @@ const { getLenderListings, searchListings, addBookToListing,deleteListing, updat
 // check authentication middleware import
 const checkAuth = require('../middlewares/checkAuth')
 
+//validate middleware import
+const { validateIdsMiddleware } = require('../middlewares/validate')
+
 const router = express.Router()
 
 // check auth for all book routes
@@ -21,9 +24,9 @@ router.get("/search", searchListings)
 router.post('/', addBookToListing )
 
 // update book and listing details
-router.patch('/:bookId/:listingId', updateBookAndListing);
+router.patch('/:bookId/:listingId', validateIdsMiddleware, updateBookAndListing);
 
 // delete listing
-router.delete('/:listingId', deleteListing )
+router.delete('/:listingId', validateIdsMiddleware, deleteListing )
 
 module.exports = router

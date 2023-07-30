@@ -179,13 +179,6 @@ const deleteListing = async (req, res) => {
   // lender id coming from the jwt token
   const lenderId = req.user._id;
 
-  // check if the provided id is a valid MongoDB ObjectId.
-  if (!mongoose.Types.ObjectId.isValid(listingId)) {
-    return res
-      .status(400)
-      .json({ error: "Listing can not be found with this id." });
-  }
-
   try {
     // find the listing to be deleted based on listingId and lenderId
     const listing = await Listing.findOneAndDelete({
@@ -193,7 +186,7 @@ const deleteListing = async (req, res) => {
       lenderId,
     });
 
-    res.json({ message: "Listing successfully deleted!" });
+    res.status(200).json({ message: "Listing successfully deleted!" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
