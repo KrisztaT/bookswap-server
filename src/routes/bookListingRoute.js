@@ -7,7 +7,7 @@ const { getLenderListings, searchListings, addBookToListing,deleteListing, updat
 const checkAuth = require('../middlewares/checkAuth')
 
 //validate middleware import
-const { validateIds, validateAndSanitiseAddBookAndListing } = require('../middlewares/validate')
+const { validateIds, validateAndSanitiseAddBookAndListing, validateSearchListings } = require('../middlewares/validate')
 
 const router = express.Router()
 
@@ -18,7 +18,7 @@ router.use(checkAuth)
 router.get('/', getLenderListings )
 
 // Search listings based on book title
-router.get("/search", searchListings)
+router.get("/search", validateSearchListings, searchListings)
 
 // add listing to the database (if the book does not exist add that to the database first)
 router.post('/', validateAndSanitiseAddBookAndListing, addBookToListing )

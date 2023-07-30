@@ -1,5 +1,69 @@
 const mongoose = require("mongoose");
-const { body, validationResult } = require("express-validator");
+const { body, query, validationResult } = require("express-validator");
+
+
+// validation rules for user registration.
+const validateJoinData = [
+  // username must be defined and not be empty, additional rules can be found in the user model
+  body("username")
+    .notEmpty()
+    .trim()
+    .escape()
+    .isLength({ min: 5 })
+    .withMessage("Username must be at least 5 characters long. "),
+
+  // first_name must be defined and not be empty
+  body("first_name")
+    .notEmpty()
+    .trim()
+    .escape()
+    .isLength({ min: 3 })
+    .withMessage("First name must be at least 3 characters long. "),
+
+  // email must be defined and not be empty additional rules can be found in the user model
+  body("email")
+    .notEmpty()
+    .isEmail()
+    .normalizeEmail()
+    .withMessage("Invalid email address. "),
+
+  body("password")
+    .notEmpty()
+    .trim()
+    .escape()
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long. "),
+
+  // process the validation results
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // error array is mapped and only the error messages are returned for meaningful error display on the frontend
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res.status(422).json({ error: errorMessages });
+    }
+    // if validation is successful, continue to the next middleware/controller
+    next();
+  },
+];
+
+// validation rules for login
+const validateLoginData = [
+  body("username").notEmpty().withMessage("Username is required. "),
+  body("password").notEmpty().withMessage("Password is required. "),
+
+  // process the validation results
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // error array is mapped and only the error messages are returned for meaningful error display on the frontend
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res.status(422).json({ error: errorMessages });
+    }
+    // if validation is successful, continue to the next middleware/controller
+    next();
+  },
+];
 
 const validateIds = (req, res, next) => {
   const { bookId, listingId } = req.params;
@@ -92,37 +156,22 @@ const validateAndSanitiseAddBookAndListing = [
   },
 ];
 
-// validation rules for user registration.
-const validateJoinData = [
-  // username must be defined and not be empty, additional rules can be found in the user model
-  body("username")
+// listing search validation and sanitisation rules
+const validateSearchListings = [
+  // title is required and must not be empty, trimmed by trailing whitespaces, and escaped
+  query('title')
     .notEmpty()
     .trim()
-    .escape()
-    .isLength({ min: 5 })
-    .withMessage("Username must be at least 5 characters long. "),
+    .escape(),
 
-  // first_name must be defined and not be empty
-  body("first_name")
-    .notEmpty()
-    .trim()
-    .escape()
-    .isLength({ min: 3 })
-    .withMessage("First name must be at least 3 characters long. "),
+  // author (optional) should be trimmed and escaped
+  query('author').optional().trim().escape(),
 
-  // email must be defined and not be empty additional rules can be found in the user model
-  body("email")
-    .notEmpty()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage("Invalid email address. "),
+  // location (optional) should be trimmed and escaped
+  query('location').optional().trim().escape(),
 
-  body("password")
-    .notEmpty()
-    .trim()
-    .escape()
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long. "),
+  // condition (optional) should be trimmed and escaped
+  query('condition').optional().trim().escape(),
 
   // process the validation results
   (req, res, next) => {
@@ -132,32 +181,16 @@ const validateJoinData = [
       const errorMessages = errors.array().map((error) => error.msg);
       return res.status(422).json({ error: errorMessages });
     }
-    // if validation is successful, continue to the next middleware/controller
+    // if validation is successful, continue to the searchListings middleware
     next();
   },
 ];
 
-// validation rules for login
-const validateLoginData = [
-  body("username").notEmpty().withMessage("Username is required. "),
-  body("password").notEmpty().withMessage("Password is required. "),
-
-  // process the validation results
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      // error array is mapped and only the error messages are returned for meaningful error display on the frontend
-      const errorMessages = errors.array().map((error) => error.msg);
-      return res.status(422).json({ error: errorMessages });
-    }
-    // if validation is successful, continue to the next middleware/controller
-    next();
-  },
-];
 
 module.exports = {
   validateIds,
   validateAndSanitiseAddBookAndListing,
   validateLoginData,
   validateJoinData,
+  validateSearchListings,
 };
