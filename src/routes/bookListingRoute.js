@@ -7,7 +7,7 @@ const { getLenderListings, searchListings, addBookToListing,deleteListing, updat
 const checkAuth = require('../middlewares/checkAuth')
 
 //validate middleware import
-const { validateIdsMiddleware } = require('../middlewares/validate')
+const { validateIdsMiddleware, validateAndSanitiseAddBookAndListing } = require('../middlewares/validate')
 
 const router = express.Router()
 
@@ -21,7 +21,7 @@ router.get('/', getLenderListings )
 router.get("/search", searchListings)
 
 // add listing to the database (if the book does not exist add that to the database first)
-router.post('/', addBookToListing )
+router.post('/', validateAndSanitiseAddBookAndListing, addBookToListing )
 
 // update book and listing details
 router.patch('/:bookId/:listingId', validateIdsMiddleware, updateBookAndListing);
