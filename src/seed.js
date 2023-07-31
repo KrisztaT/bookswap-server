@@ -2,13 +2,31 @@ const userModel = require("./models/userModel");
 const listingModel = require("./models/listingModel");
 const bookModel = require("./models/bookModel");
 const { databaseConnector, databaseDisconnector } = require("./database");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const seedData = async () => {
- 
-  databaseConnector(process.env.DATABASE_URL_DEV);
+
+  var databaseURL = "";
+  switch (process.env.NODE_ENV.toLowerCase()) {
+    case "test":
+      databaseURL = process.env.DATABASE_URL_TEST;
+      break;
+    case "development":
+      databaseURL = process.env.DATABASE_URL_DEV;
+      break;
+    case "production":
+      databaseURL = process.env.DATABASE_URL;
+      break;
+    default:
+      console.error(
+        "Incorrect JS environment specified, database will not be connected."
+      );
+      break;
+  }
+
+  databaseConnector(databaseURL);
 
   // delete all documents
   await userModel.deleteMany();
@@ -49,7 +67,7 @@ const seedData = async () => {
 
   const seedUsers = await userModel.create(
     await Promise.all(
-     // salt and hash password to store in the database
+      // salt and hash password to store in the database
       users.map(async (user) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(user.password, salt);
