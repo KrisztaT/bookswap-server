@@ -3,6 +3,7 @@ const Listing = require("../models/listingModel");
 const Book = require("../models/bookModel");
 const { updateBook, createBook } = require("../services/bookService");
 const { updateListing, createListing } = require("../services/listingService");
+const { isEmptyData } = require("../services/isEmptyData");
 
 // get listing details based on the lender id from the token
 const getLenderListings = async (req, res) => {
@@ -191,7 +192,9 @@ const updateBookAndListing = async (req, res) => {
     // find the book to have book information even if the creator is not the same as the user
     let book = await Book.findById(bookId);
 
-    // if the creator is not the same as the user, then update the book details and give back the new book information
+    isEmptyData(req.body);
+
+    // if the creator is the same as the user, then update the book details and give back the new book information
     if (book.creatorId.toString() === userId.toString()) {
       book = await updateBook(bookId, userId, req.body);
     }

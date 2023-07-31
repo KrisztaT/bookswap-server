@@ -10,7 +10,7 @@ const validateJoinData = [
     .trim()
     .escape()
     .isLength({ min: 5 })
-    .withMessage("Username must be at least 5 characters long. "),
+    .withMessage(" Username must be at least 5 characters long. "),
 
   // first_name must be defined and not be empty
   body("first_name")
@@ -18,21 +18,21 @@ const validateJoinData = [
     .trim()
     .escape()
     .isLength({ min: 3 })
-    .withMessage("First name must be at least 3 characters long. "),
+    .withMessage(" First name must be at least 3 characters long. "),
 
   // email must be defined and not be empty additional rules can be found in the user model
   body("email")
     .notEmpty()
     .isEmail()
     .normalizeEmail()
-    .withMessage("Invalid email address. "),
+    .withMessage(" Invalid email address. "),
 
   body("password")
     .notEmpty()
     .trim()
     .escape()
     .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long. "),
+    .withMessage(" Password must be at least 6 characters long. "),
 
   // process the validation results
   (req, res, next) => {
@@ -49,8 +49,8 @@ const validateJoinData = [
 
 // validation rules for login
 const validateLoginData = [
-  body("username").notEmpty().withMessage("Username is required. "),
-  body("password").notEmpty().withMessage("Password is required. "),
+  body("username").notEmpty().withMessage(" Username is required. "),
+  body("password").notEmpty().withMessage(" Password is required. "),
 
   // process the validation results
   (req, res, next) => {
@@ -70,12 +70,12 @@ const validateIds = (req, res, next) => {
 
   // check if listingId is a valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(listingId)) {
-    return res.status(400).json({ error: "Invalid listingId." });
+    return res.status(400).json({ error: " Invalid listingId." });
   }
 
   // if bookId is defined, validate it as well
   if (bookId && !mongoose.Types.ObjectId.isValid(bookId)) {
-    return res.status(400).json({ error: "Invalid bookId." });
+    return res.status(400).json({ error: " Invalid bookId." });
   }
 
   next();
@@ -92,14 +92,14 @@ const capitalise = (value) => {
 };
 
 // validating and sanitising book and listing data before data is stored in the database
-const validateAndSanitiseAddBookAndListing = [
+const validateBookAndListingData = [
   // title must not be empty, trimmed by trailing whitespaces, escaping any potential dangerous chars, capitalised, in case it is empty message sent as error msg
   body("title")
     .notEmpty()
     .trim()
     .escape()
     .customSanitizer(capitalise)
-    .withMessage("Title is required! "),
+    .withMessage(" Title is required! "),
 
   // author must not be empty, trimmed by trailing whitespaces, escaping any potential dangerous chars, capitalised, in case it is empty message sent as error msg
   body("author")
@@ -107,33 +107,33 @@ const validateAndSanitiseAddBookAndListing = [
     .trim()
     .escape()
     .customSanitizer(capitalise)
-    .withMessage("Author is required! "),
+    .withMessage(" Author is required! "),
 
   // check if imgUrl is an url format, send msg if error occured (optional field)
   body("imgUrl")
     .optional({ checkFalsy: true })
     .isURL()
     .trim()
-    .withMessage("Not valid url format! "),
+    .withMessage(" Not valid url format! "),
 
   // page has to be greater than 0 (optional field)
   body("page")
     .optional({ checkFalsy: true })
     .isInt({ gt: 0 })
-    .withMessage("Page number must be greater than 0! "),
+    .withMessage(" Page number must be greater than 0! "),
 
   // check if releaseYear is a number between 1700 and 2023 (optional field)
   body("releaseYear")
     .optional({ checkFalsy: true })
     .isInt({ min: 1700, max: 2023 })
-    .withMessage("Release year has to be between 1700 and 2023! "),
+    .withMessage(" Release year has to be between 1700 and 2023! "),
 
   // check if condition is one of the allowed values
   body("condition")
     .isIn(["new", "good", "acceptable", "used"])
     .trim()
     .escape()
-    .withMessage("Condition is required and has to be chosen from the list! "),
+    .withMessage(" Condition is required and has to be chosen from the list! "),
 
   // check if location is not empty
   body("location")
@@ -141,7 +141,7 @@ const validateAndSanitiseAddBookAndListing = [
     .trim()
     .escape()
     .customSanitizer(capitalise)
-    .withMessage("Location is required! "),
+    .withMessage(" Location is required! "),
 
   // process the validation and sanitisation results
   (req, res, next) => {
@@ -157,7 +157,7 @@ const validateAndSanitiseAddBookAndListing = [
 ];
 
 // listing search validation and sanitisation rules
-const validateSearchListings = [
+const validateSearchListingData = [
   // title is required and must not be empty, trimmed by trailing whitespaces, and escaped
   query('title')
     .notEmpty()
@@ -189,8 +189,8 @@ const validateSearchListings = [
 
 module.exports = {
   validateIds,
-  validateAndSanitiseAddBookAndListing,
+  validateBookAndListingData,
   validateLoginData,
   validateJoinData,
-  validateSearchListings,
+  validateSearchListingData,
 };
