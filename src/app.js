@@ -13,11 +13,8 @@ const mongoose = require("mongoose");
 // user routes import
 const userRoute = require("./routes/userRoute");
 
-// book route import
-const bookRoute = require("./routes/bookRoute");
-
 // listing route import
-const listingRoute = require("./routes/listingRoute");
+const listingRoute = require("./routes/bookListingRoute");
 
 /* The code is assigning the value of the environment
 variable `HOST` to the constant `HOST`. If the `HOST` environment variable is not defined, it will
@@ -95,11 +92,16 @@ app.use(express.urlencoded({ extended: true }));
 // register user route
 app.use("/api/user", userRoute);
 
-// register book route
-app.use("/api/book", bookRoute);
-
 //register listing route
 app.use("/api/listing", listingRoute);
+
+// error handling middleware function is defined to catch all errors and handle them
+app.use((error, request, response, next) => {
+  const statusCode = error.statusCode || 500;
+  response.status(statusCode).json({
+    error: error.message
+  });
+});
 
 /* The code is defining a route handler for the GET request to the root path ("/") of the Express.js
 application. */

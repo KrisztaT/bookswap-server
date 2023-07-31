@@ -35,7 +35,7 @@ userSchema.statics.join = async function(username, first_name, email, password){
 
     // check if all fields are filled
     if (!username || !first_name || !email || !password ){
-        throw Error("All fields must be filled")
+        throw Error("All fields must be filled! ")
     }
     // checking if there is already a user in the database with the same username 
      const usernameExists = await this.findOne({username})
@@ -44,12 +44,12 @@ userSchema.statics.join = async function(username, first_name, email, password){
    
     // throw error if username already exists in the database
     if(usernameExists){
-        throw Error("Username is already in use")
+        throw Error("Username is already in use! ")
     }
 
     // throw error if email already exists in the database
     if(emailExists){
-        throw Error("Email is already in use")
+        throw Error("Email is already in use! ")
     }
     
     // salting and hashing the password using bcrypt
@@ -67,7 +67,7 @@ userSchema.statics.login = async function (username, password){
 
     // check if username and password were provided
     if (!username || !password){
-        throw Error("All fields must be filled!")
+        throw Error("All fields must be filled! ")
     }
 
     // find user in the database based on username
@@ -75,7 +75,7 @@ userSchema.statics.login = async function (username, password){
 
     // if username is not in the database throw error
     if(!user){
-        throw Error("Incorrect username!")
+        throw Error("Incorrect username! ")
     }
 
     // compare provided password with the hashed password
@@ -83,7 +83,7 @@ userSchema.statics.login = async function (username, password){
 
     // if passwords not match throw error
     if(!match){
-        throw Error("Incorrect password!")
+        throw Error("Incorrect password! ")
     }
     
     return user

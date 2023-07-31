@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const Listing = require("../models/listingModel");
 const Book = require("../models/bookModel");
-const { updateBook } = require("../services/bookService");
-const { updateListing } = require("../services/listingService");
+const { updateBook, createBook } = require("../services/bookService");
+const { updateListing, createListing } = require("../services/listingService");
+const { isEmptyData } = require("../services/isEmptyData");
 
 // get listing details based on the lender id from the token
-const getLenderListing = async (req, res) => {
+const getLenderListings = async (req, res) => {
   try {
     // user id coming from the jwt token
     const lenderId = req.user._id;
@@ -51,14 +52,7 @@ const addBookToListing = async (req, res) => {
     // if the book does not exist, add it to the "books" collection
     if (!book) {
       const creatorId = req.user._id;
-      book = await Book.create({
-        imgUrl,
-        title,
-        author,
-        page,
-        releaseYear,
-        creatorId,
-      });
+      book = await createBook({ imgUrl, title, author, page, releaseYear, creatorId });
     }
 
     const lenderId = req.user._id;
@@ -69,12 +63,7 @@ const addBookToListing = async (req, res) => {
 
     if (!listing) {
       // add the listing details to the listings collection using the book id
-      const newListing = await Listing.create({
-        bookId,
-        lenderId,
-        condition,
-        location,
-      });
+      const newListing = await createListing(bookId, lenderId, condition, location);
 
       const response = {
         book: {
@@ -105,39 +94,6 @@ const addBookToListing = async (req, res) => {
   }
 };
 
-/* // update listing details, only lender is authorised to do that
-// in MVP this is the availability status change
-const updateListing = async (req, res) => {
-  // listingId is coming from the parameters
-  const { listingId } = req.params;
-  // lender id coming from the jwt token
-  const lenderId = req.user._id;
-
-  // check if the provided id is a valid MongoDB ObjectId.
-  if (!mongoose.Types.ObjectId.isValid(listingId)) {
-    return res
-      .status(400)
-      .json({ error: "Listing can not be found with this id." });
-  }
-
-  // update listing details in the database and pass back the new listing details
-  const listing = await Listing.findOneAndUpdate(
-    { _id: listingId, lenderId: lenderId },
-    {
-      ...req.body,
-    },
-    { new: true }
-  );
-
-  // if listing was not found with listingId and created by user with lenderId, error is sent.
-  if (!listing) {
-    return res.status(400).json({
-      error:
-        "Request is not authorized or Listing can not be found in the database.",
-    });
-  }
-  res.status(200).json(listing);
-}; */
 
 // search listing based on title
 const searchListings = async (req, res) => {
@@ -212,13 +168,6 @@ const deleteListing = async (req, res) => {
   // lender id coming from the jwt token
   const lenderId = req.user._id;
 
-  // check if the provided id is a valid MongoDB ObjectId.
-  if (!mongoose.Types.ObjectId.isValid(listingId)) {
-    return res
-      .status(400)
-      .json({ error: "Listing can not be found with this id." });
-  }
-
   try {
     // find the listing to be deleted based on listingId and lenderId
     const listing = await Listing.findOneAndDelete({
@@ -226,7 +175,7 @@ const deleteListing = async (req, res) => {
       lenderId,
     });
 
-    res.json({ message: "Listing successfully deleted!" });
+    res.status(200).json({ message: "Listing successfully deleted!" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -243,7 +192,9 @@ const updateBookAndListing = async (req, res) => {
     // find the book to have book information even if the creator is not the same as the user
     let book = await Book.findById(bookId);
 
-    // if the creator is not the same as the user, then update the book details and give back the new book information
+    isEmptyData(req.body);
+
+    // if the creator is the same as the user, then update the book details and give back the new book information
     if (book.creatorId.toString() === userId.toString()) {
       book = await updateBook(bookId, userId, req.body);
     }
@@ -280,10 +231,9 @@ const updateBookAndListing = async (req, res) => {
 };
 
 module.exports = {
-  getLenderListing,
+  getLenderListings,
   searchListings,
   addBookToListing,
-  /*   updateListing, */
   deleteListing,
   updateBookAndListing,
 };
