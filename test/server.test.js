@@ -24,7 +24,7 @@ beforeAll(async () => {
     }
   });
 
-// test connection and rout handler
+// test connection and route handler
 describe("Route handler tests", () => {
     
     test("GET / should return 'Hello world!'", async () => {

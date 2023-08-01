@@ -22,7 +22,7 @@ const updateBook = async (bookId, userId, newData) => {
   };
 
  
-  // create book
+  // create book using the passed parameters
   const createBook = async ({ imgUrl, title, author, page, releaseYear, creatorId }) => {
     try {
       return await Book.create({

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+// Schema for the "listing" collection, all fields are required
+// ids are referenced to book and user model
 const listingSchema = new mongoose.Schema({
   bookId: {
     type: mongoose.Schema.Types.ObjectId,

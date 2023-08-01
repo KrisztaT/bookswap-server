@@ -33,10 +33,11 @@ const getLenderListings = async (req, res) => {
       },
     }));
 
-    // return the response with the mapped data
+    // add status code and the response to the response object
     res.status(200).json(response);
   } catch (error) {
-    res.json({ error: error.message });
+    //handle errors
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -46,15 +47,16 @@ const addBookToListing = async (req, res) => {
     req.body;
 
   try {
-    // check if the book already exists in the "books" collection
+    // check if the book already exists in the books collection
     let book = await Book.findOne({ title, author });
 
-    // if the book does not exist, add it to the "books" collection
+    // if the book does not exist, add it to the books collection
     if (!book) {
       const creatorId = req.user._id;
       book = await createBook({ imgUrl, title, author, page, releaseYear, creatorId });
     }
 
+    // extract the lenderId from the request object. and bookId from the found book
     const lenderId = req.user._id;
     const bookId = book._id;
 
@@ -65,6 +67,7 @@ const addBookToListing = async (req, res) => {
       // add the listing details to the listings collection using the book id
       const newListing = await createListing(bookId, lenderId, condition, location);
 
+      // create the response from the book and listing details
       const response = {
         book: {
           _id: book._id,
@@ -84,16 +87,17 @@ const addBookToListing = async (req, res) => {
         },
       };
 
+       // add status code and the response to the response object
       res.status(200).json(response);
     } else {
       // listing already exists for this lender and book
       res.status(409).json({ error: "This book was already listed." });
     }
   } catch (error) {
+    //handle errors
     res.status(400).json({ error: error.message });
   }
 };
-
 
 // search listing based on title
 const searchListings = async (req, res) => {
@@ -124,10 +128,10 @@ const searchListings = async (req, res) => {
     if (condition) listingQuery.condition = condition;
 
     // find the associated listings for the book
-    // populate lender details (only include first_name and email)
+    // populate lender details
     const listings = await Listing.find(listingQuery).populate("lenderId");
 
-    // check if listings array is empty
+    // check if listings array is empty return error
     if (!listings || listings.length === 0) {
       return res
         .status(404)
@@ -155,6 +159,7 @@ const searchListings = async (req, res) => {
       })),
     };
 
+    // add status code and the response to the response object
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -175,6 +180,7 @@ const deleteListing = async (req, res) => {
       lenderId,
     });
 
+    // add status code and the message to the response object
     res.status(200).json({ message: "Listing successfully deleted!" });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -192,6 +198,7 @@ const updateBookAndListing = async (req, res) => {
     // find the book to have book information even if the creator is not the same as the user
     let book = await Book.findById(bookId);
 
+    // check if the request body contains empty values
     isEmptyData(req.body);
 
     // if the creator is the same as the user, then update the book details and give back the new book information

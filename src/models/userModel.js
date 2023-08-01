@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 
 const Schema= mongoose.Schema
 
-// create user schema object
+// create user schema object, all fields are required
 const userSchema = new Schema({
     username: {
 		type: String,
@@ -56,7 +56,7 @@ userSchema.statics.join = async function(username, first_name, email, password){
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
 
-    // Creating a new user object in the database using the Mongoose `create` method.
+    // creating a new user document in the database using the Mongoose create method.
     const user = await this.create({username, first_name, email, password: hash})
 
     return user

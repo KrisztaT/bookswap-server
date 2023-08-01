@@ -81,7 +81,7 @@ describe("Join", () => {
       .post("/api/user/join")
       .send(testUserData);
 
-    // check reponse
+    // check response
     expect(res.status).toBe(400);
     expect(res.body.error).toContain("Username is already in use! ");
   });
