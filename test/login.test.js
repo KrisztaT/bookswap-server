@@ -4,6 +4,7 @@ const { app } = require("../src/app");
 
 const mongoose = require("mongoose");
 
+// connect to database before testing
 beforeAll(async () => {
   try {
     await mongoose.connect(process.env.DATABASE_URL_TEST);
@@ -13,6 +14,7 @@ beforeAll(async () => {
   }
 });
 
+// close database connection after testing
 afterAll(async () => {
   try {
     await mongoose.connection.close();

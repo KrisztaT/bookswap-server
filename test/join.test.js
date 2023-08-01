@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const User = require("../src/models/userModel")
 
+// connect to database before testing
 beforeAll(async () => {
   try {
     await mongoose.connect(process.env.DATABASE_URL_TEST);
@@ -15,6 +16,7 @@ beforeAll(async () => {
   }
 });
 
+// close database connection after testing
 afterAll(async () => {
   try {
     await mongoose.connection.close();
