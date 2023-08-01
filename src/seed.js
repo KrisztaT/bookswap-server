@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// seed database with data
 const seedData = async () => {
 
   var databaseURL = "";

@@ -27,7 +27,7 @@ router.use(checkAuth);
 // get all listings of a lender
 router.get("/", getLenderListings);
 
-// Search listings based on book title
+// search listings based on book and listing details
 router.get("/search", validateSearchListingData, searchListings);
 
 // add listing to the database (if the book does not exist add that to the database first)

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { body, query, validationResult } = require("express-validator");
 
 
-// validation rules for user registration.
+// validation rules for user join
 const validateJoinData = [
   // username must be defined and not be empty, additional rules can be found in the user model
   body("username")
@@ -27,6 +27,7 @@ const validateJoinData = [
     .normalizeEmail()
     .withMessage(" Invalid email address. "),
 
+    // password must be defined and minimum 6 characters long
   body("password")
     .notEmpty()
     .trim()
@@ -49,6 +50,7 @@ const validateJoinData = [
 
 // validation rules for login
 const validateLoginData = [
+  // both username and password is required
   body("username").notEmpty().withMessage(" Username is required. "),
   body("password").notEmpty().withMessage(" Password is required. "),
 
@@ -87,7 +89,7 @@ const capitalise = (value) => {
   if (typeof value !== "string") {
     return value;
   }
-  // if the value string it returns the first letter cpitalised string
+  // if the value string it returns the first letter capitalised string
   return value.charAt(0).toUpperCase() + value.slice(1);
 };
 

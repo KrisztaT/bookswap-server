@@ -29,8 +29,7 @@ const loginUser = async (request, response) => {
 
 // join user controller
 const joinUser = async (request, response) => {
-  /* Using object destructuring to extract the values of the properties `username`, `first_name`, `email`, and `password` from the
-    `request.body` object. */
+  // extract the values of the properties username, first_name, email, and password from the request.body object.
   const { username, first_name, email, password } = request.body;
 
   try {

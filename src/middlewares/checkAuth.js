@@ -29,8 +29,7 @@ const checkAuth = async (req, res, next) => {
 
     // error handling
   } catch (error) {
-    console.log(error)
-    res.status(401).json({error: 'Request is not authorized!'})
+    res.status(401).json({error: 'Unauthorized due to lack of permission or an expired token.'})
   }
 }
 

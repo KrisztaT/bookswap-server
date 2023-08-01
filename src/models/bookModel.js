@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
-// Schema for the "books" collection
+// Schema for the "books" collection, title and author is required
+//  creatorId is referenced to book and user model
 const bookSchema = new mongoose.Schema({
   imgUrl: {
     type: String,
