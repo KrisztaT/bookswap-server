@@ -55,13 +55,13 @@ const seedData = async () => {
     {
       username: "jozsef",
       first_name: "Jozsef",
-      email: "jozsef@gmail.com.com",
+      email: "jozsef@gmail.com",
       password: "123456",
     },
     {
       username: "jennifer",
       first_name: "Jennifer",
-      email: "jennifer@gmail.com.com",
+      email: "jennifer@gmail.com",
       password: "123456",
     },
   ];
