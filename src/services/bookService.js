@@ -34,7 +34,7 @@ const updateBook = async (bookId, userId, newData) => {
         creatorId,
       });
     } catch (error) {
-      // handle the error, log it, or rethrow it with more context
+      // handle the error
       throw new Error(`Error creating book: ${error.message}`);
     }
   };
