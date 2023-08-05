@@ -91,14 +91,6 @@ app.use("/api/user", userRoute);
 //register listing route
 app.use("/api/listing", listingRoute);
 
-// error handling middleware function is defined to catch all errors and handle them
-app.use((error, request, response, next) => {
-  const statusCode = error.statusCode || 500;
-  response.status(statusCode).json({
-    error: error.message
-  });
-});
-
 // route handler for the GET request to the root path ("/") 
 app.get("/", (request, response) => {
   response.json({
@@ -112,6 +104,14 @@ app.get("*", (request, response) => {
   response.status(404).json({
     message: "No route with that path found!",
     attemptedPath: request.path,
+  });
+});
+
+// error handling middleware function is defined to catch all errors and handle them
+app.use((error, request, response, next) => {
+  const statusCode = error.statusCode || 500;
+  response.status(statusCode).json({
+    error: error.message
   });
 });
 
